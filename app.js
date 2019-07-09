@@ -42,13 +42,13 @@ app.get("/campgrounds", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.render("index", {campgrounds: allCampgrounds});
+      res.render("campgrounds/index", {campgrounds: allCampgrounds});
     }
   })
 });
 
 app.get("/campgrounds/new", (req, res) => {
-  res.render("new");
+  res.render("campgrounds/new");
 });
 
 app.post("/campgrounds", (req, res) => {
@@ -72,7 +72,19 @@ app.get("/campgrounds/:id", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.render("show", {campground: campground});
+      res.render("campgrounds/show", {campground: campground});
+    }
+  });
+});
+
+// 
+// 
+app.get("/campgrounds/:id/comments/new", (req, res) => {
+  Campground.findById(req.params.id, (err, foundCampground) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("comments/new", {campground: foundCampground});
     }
   });
 });

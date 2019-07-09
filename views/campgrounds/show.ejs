@@ -1,6 +1,7 @@
+<% include ../partials/header %>
 <h1>This is the show template!</h1>
 
-<h4><%= campground.name%></h4>
+<h4><%= campground.name %></h4>
 
 <img src="<%= campground.image %>">
 
@@ -11,3 +12,4 @@
         <strong><%= comment.author %></strong> - <%= comment.text %>
     </p>
 <% }); %>
+<% include ../partials/footer %>
