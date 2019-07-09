@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
+const Comment = require("./models/comment")
 const seedDB = require("./seed");
 
 // let campgrounds = [
@@ -23,6 +24,7 @@ mongoose.connect("mongodb+srv://Admin:5t6y7u8iYKF!@cluster0-mhbxn.mongodb.net/te
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/public"));
 
 // Campground.insertMany([
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg", description: "Bacon ipsum dolor amet short loin swine pancetta, cow beef shank frankfurter pork belly chuck picanha."},
@@ -77,14 +79,36 @@ app.get("/campgrounds/:id", (req, res) => {
   });
 });
 
-// 
-// 
+// =========================
+// Comments
+// =========================
+
+
 app.get("/campgrounds/:id/comments/new", (req, res) => {
   Campground.findById(req.params.id, (err, foundCampground) => {
     if (err) {
       console.log(err);
     } else {
       res.render("comments/new", {campground: foundCampground});
+    }
+  });
+});
+
+app.post("/campgrounds/:id/comments", (req, res) => {
+  Campground.findById(req.params.id, (err, foundCampground) => {
+    if(err) {
+      console.log(err);
+      res.redirect("/campgrounds")
+    } else {
+      Comment.create(req.body.comment, (err, comment) => {
+        if (err) {
+          console.log(err);
+        } else {
+          foundCampground.comments.push(comment);
+          foundCampground.save();
+          res.redirect("/campgrounds/" + foundCampground._id);
+        }
+      });
     }
   });
 });
