@@ -49,8 +49,8 @@ app.use(function(req, res, next){
 });
 
 app.use(indexRoutes);
-app.use(campgroundRoutes);
-app.use(commentRoutes);
+app.use("/campgrounds", campgroundRoutes);
+app.use("/campgrounds/:id/comments", commentRoutes);
 
 // Campground.insertMany([
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg", description: "Bacon ipsum dolor amet short loin swine pancetta, cow beef shank frankfurter pork belly chuck picanha."},
