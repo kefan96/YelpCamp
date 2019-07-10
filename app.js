@@ -7,6 +7,7 @@ const Comment = require("./models/comment")
 const seedDB = require("./seed");
 const passport = require("passport");
 const localStrategy = require("passport-local");
+const User = require("./models/user")
 
 // let campgrounds = [
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg"},
@@ -14,7 +15,6 @@ const localStrategy = require("passport-local");
 //   {name: "Alton RV Park", image: "https://www.appletonmn.com/vertical/Sites/%7B4405B7C1-A469-4999-9BC5-EC3962355392%7D/uploads/campground_(2).jpg"}
 // ]
 
-seedDB();
 mongoose.connect("mongodb+srv://Admin:5t6y7u8iYKF!@cluster0-mhbxn.mongodb.net/test?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useCreateIndex: true
@@ -27,6 +27,18 @@ mongoose.connect("mongodb+srv://Admin:5t6y7u8iYKF!@cluster0-mhbxn.mongodb.net/te
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
+seedDB();
+
+app.use(require("express-session")({
+  secret: "Jake wins cutest dog!",
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Campground.insertMany([
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg", description: "Bacon ipsum dolor amet short loin swine pancetta, cow beef shank frankfurter pork belly chuck picanha."},
@@ -112,6 +124,27 @@ app.post("/campgrounds/:id/comments", (req, res) => {
         }
       });
     }
+  });
+});
+
+// ================
+// AUTH ROUTES
+// ================
+
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+// Sign Up Logic
+app.post("/register", (req, res) => {
+  User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
+    if (err) {
+      console.log(err);
+      return res.render("register");
+    }
+    passport.authenticate("local")(req, res, function(){
+      res.redirect("/campgrounds");
+    });
   });
 });
 
