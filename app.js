@@ -98,7 +98,7 @@ app.get("/campgrounds/:id", (req, res) => {
 // =========================
 
 
-app.get("/campgrounds/:id/comments/new", (req, res) => {
+app.get("/campgrounds/:id/comments/new", isLoggedIn, (req, res) => {
   Campground.findById(req.params.id, (err, foundCampground) => {
     if (err) {
       console.log(err);
@@ -108,7 +108,7 @@ app.get("/campgrounds/:id/comments/new", (req, res) => {
   });
 });
 
-app.post("/campgrounds/:id/comments", (req, res) => {
+app.post("/campgrounds/:id/comments", isLoggedIn, (req, res) => {
   Campground.findById(req.params.id, (err, foundCampground) => {
     if(err) {
       console.log(err);
@@ -127,9 +127,9 @@ app.post("/campgrounds/:id/comments", (req, res) => {
   });
 });
 
-// ================
+// =============================
 // AUTH ROUTES
-// ================
+// =============================
 
 app.get("/register", (req, res) => {
   res.render("register");
@@ -147,6 +147,31 @@ app.post("/register", (req, res) => {
     });
   });
 });
+
+// show login form
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+// login logic
+app.post("/login", passport.authenticate("local", {
+  successRedirect: "/campgrounds",
+  failureRedirect: "/login"
+}), (req, res) => {
+});
+
+// log out route
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/campgrounds");
+});
+
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
 
 app.listen(3000, () => {
   console.log("Yelp Camp Listen on Port 3000");
