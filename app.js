@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 const Comment = require("./models/comment")
 const seedDB = require("./seed");
+const passport = require("passport");
+const localStrategy = require("passport-local");
 
 // let campgrounds = [
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg"},
