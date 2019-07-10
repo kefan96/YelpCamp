@@ -23,10 +23,13 @@ router.get("/new", isLoggedIn, (req, res) => {
         Comment.create(req.body.comment, (err, comment) => {
           if (err) {
             console.log(err);
-          } else {
+          } else { 
+            comment.author.id = req.user._id;
+            comment.author.username = req.user.username;
+            comment.save(); 
             foundCampground.comments.push(comment);
             foundCampground.save();
-            res.redirect("/" + foundCampground._id);
+            res.redirect("/campgrounds/" + foundCampground._id);
           }
         });
       }
