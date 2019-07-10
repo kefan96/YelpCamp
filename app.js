@@ -3,11 +3,14 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
-const Comment = require("./models/comment")
+const Comment = require("./models/comment");
 const seedDB = require("./seed");
 const passport = require("passport");
 const localStrategy = require("passport-local");
-const User = require("./models/user")
+const User = require("./models/user");
+const commentRoutes = require("./routes/comments");
+const campgroundRoutes = require("./routes/campgrounds");
+const indexRoutes = require("./routes/index");
 
 // let campgrounds = [
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg"},
@@ -40,6 +43,15 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(function(req, res, next){
+  res.locals.currentUser = req.user;
+  next();
+});
+
+app.use(indexRoutes);
+app.use(campgroundRoutes);
+app.use(commentRoutes);
+
 // Campground.insertMany([
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg", description: "Bacon ipsum dolor amet short loin swine pancetta, cow beef shank frankfurter pork belly chuck picanha."},
 //   {name: "Korbel East Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/1/540x360.jpg", description: "Kevin pork loin pig turducken ham hock capicola. Brisket swine leberkas drumstick. "},
@@ -47,131 +59,6 @@ passport.deserializeUser(User.deserializeUser());
 // ], err => {
 //   if (err) return handleError(err);
 // })
-
-
-app.get("/", (req, res) => {
-  res.render("landing");
-});
-
-app.get("/campgrounds", (req, res) => {
-  Campground.find({}, (err, allCampgrounds) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render("campgrounds/index", {campgrounds: allCampgrounds});
-    }
-  })
-});
-
-app.get("/campgrounds/new", (req, res) => {
-  res.render("campgrounds/new");
-});
-
-app.post("/campgrounds", (req, res) => {
-  var name = req.body.name;
-  var image = req.body.image;
-  var description = req.body.description;
-  var newCampground = {name: name, image: image, description: description};
-  Campground.create(newCampground, err => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.redirect("/campgrounds");
-    }
-  });
-});
-
-app.get("/campgrounds/:id", (req, res) => {
-  // find the campground with provided ID
-  // render show template with that campground
-  Campground.findById(req.params.id).populate("comments").exec((err, campground) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render("campgrounds/show", {campground: campground});
-    }
-  });
-});
-
-// =========================
-// Comments
-// =========================
-
-
-app.get("/campgrounds/:id/comments/new", isLoggedIn, (req, res) => {
-  Campground.findById(req.params.id, (err, foundCampground) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render("comments/new", {campground: foundCampground});
-    }
-  });
-});
-
-app.post("/campgrounds/:id/comments", isLoggedIn, (req, res) => {
-  Campground.findById(req.params.id, (err, foundCampground) => {
-    if(err) {
-      console.log(err);
-      res.redirect("/campgrounds")
-    } else {
-      Comment.create(req.body.comment, (err, comment) => {
-        if (err) {
-          console.log(err);
-        } else {
-          foundCampground.comments.push(comment);
-          foundCampground.save();
-          res.redirect("/campgrounds/" + foundCampground._id);
-        }
-      });
-    }
-  });
-});
-
-// =============================
-// AUTH ROUTES
-// =============================
-
-app.get("/register", (req, res) => {
-  res.render("register");
-});
-
-// Sign Up Logic
-app.post("/register", (req, res) => {
-  User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
-    if (err) {
-      console.log(err);
-      return res.render("register");
-    }
-    passport.authenticate("local")(req, res, function(){
-      res.redirect("/campgrounds");
-    });
-  });
-});
-
-// show login form
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-// login logic
-app.post("/login", passport.authenticate("local", {
-  successRedirect: "/campgrounds",
-  failureRedirect: "/login"
-}), (req, res) => {
-});
-
-// log out route
-app.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/campgrounds");
-});
-
-function isLoggedIn(req, res, next) {
-  if(req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
-}
 
 app.listen(3000, () => {
   console.log("Yelp Camp Listen on Port 3000");
