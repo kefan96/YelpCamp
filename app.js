@@ -21,7 +21,8 @@ const methodOverride = require("method-override");
 
 mongoose.connect("mongodb+srv://Admin:5t6y7u8iYKF!@cluster0-mhbxn.mongodb.net/test?retryWrites=true&w=majority", {
   useNewUrlParser: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  useFindAndModify: false
 }).then(() => {
   console.log("Connected to DB!");
 }).catch(err => {
@@ -32,7 +33,7 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
-seedDB();
+// seedDB();
 
 app.use(require("express-session")({
   secret: "Jake wins cutest dog!",
