@@ -11,6 +11,7 @@ const User = require("./models/user");
 const commentRoutes = require("./routes/comments");
 const campgroundRoutes = require("./routes/campgrounds");
 const indexRoutes = require("./routes/index");
+const methodOverride = require("method-override");
 
 // let campgrounds = [
 //   {name: "Korbel North Campground", image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg"},
@@ -30,6 +31,7 @@ mongoose.connect("mongodb+srv://Admin:5t6y7u8iYKF!@cluster0-mhbxn.mongodb.net/te
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 seedDB();
 
 app.use(require("express-session")({
