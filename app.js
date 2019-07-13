@@ -67,6 +67,6 @@ app.use("/campgrounds/:id/comments", commentRoutes);
 //   if (err) return handleError(err);
 // })
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, process.env.IP, () => {
   console.log("Yelp Camp Listen on Port 3000");
 });
