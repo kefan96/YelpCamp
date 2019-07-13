@@ -5,7 +5,7 @@
     <div class="container">
       <h1>Welcome To YelpCamp!</h1>
       <p>View our hand-picked campgrounds from all over the world</p>
-      <p><a class="btn btn-secondary brn-lg" href="/campgrounds/new">Add a New Campground</a></p>
+      <p><a class="btn btn-secondary btn-lg" href="/campgrounds/new">Add a New Campground</a></p>
     </div>
   </header>
 
@@ -16,7 +16,7 @@
         <div class="card-body">
           <h5 class="card-title"><%= campground.name %></h5>
           <p class="card-text"><%= campground.description.substring(0, 100)%></p>
-          <a href="/campgrounds/<%= campground.id %>" class="btn btn-primary">Go somewhere</a>
+          <a href="/campgrounds/<%= campground.id %>" class="btn btn-primary">More info</a>
         </div>
       </div>
     <% }); %>
