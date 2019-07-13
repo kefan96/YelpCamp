@@ -20,7 +20,7 @@ const flash = require("connect-flash");
 //   {name: "Alton RV Park", image: "https://www.appletonmn.com/vertical/Sites/%7B4405B7C1-A469-4999-9BC5-EC3962355392%7D/uploads/campground_(2).jpg"}
 // ]
 
-mongoose.connect("mongodb+srv://Admin:5t6y7u8iYKF!@cluster0-mhbxn.mongodb.net/test?retryWrites=true&w=majority", {
+mongoose.connect("mongodb://heroku_lb348tgq:lcrmj6tn14uu0phv8kfknfgc4v@ds119682.mlab.com:19682/heroku_lb348tgq", {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false
