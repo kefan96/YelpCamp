@@ -5,9 +5,13 @@
         <div class="col-md-3">
             <p class="lead">YelpCamp</p>
             <div class="list-group">
-                <li class="list-group-item">Item 1</li>
-                <li class="list-group-item">Item 2</li>
-                <li class="list-group-item">Item 3</li>
+                <% allCampgrounds.forEach(function(entry){ %>
+                    <% if (entry._id.equals(campground._id)){ %>
+                        <a href="/campgrounds/<%= entry._id %>" class="list-group-item list-group-item-action active"><%= entry.name %></a>
+                    <% } else { %>
+                        <a href="/campgrounds/<%= entry._id %>" class="list-group-item list-group-item-action"><%= entry.name %></a>
+                    <% } %>
+                <% }); %>
             </div>
         </div>
         <div class="col-md-9">
@@ -15,7 +19,7 @@
                 <img src="<%= campground.image %>" class="card-img-top">
                 <div class="card-body">
                     <h2 class="card-title"><%= campground.name %></h2>
-                    <h4 class="card-title">$9.00/night</h4>
+                    <h4 class="card-title">$<%= campground.price %>/night</h4>
                     <p class="card-text"><%= campground.description %></p>
                     <p>
                         <em>Submitted By <%= campground.author.username%></em>
@@ -38,7 +42,7 @@
                     <div class="col-md-12">
                         <div class="d-flex justify-content-between">
                             <strong><%= comment.author.username %></strong>
-                            <span>10 days ago</span>
+                            <small>10 days ago</small>
                         </div>
                         <p><%= comment.text %></p>
                         <% if(currentUser && comment.author.id.equals(currentUser._id)) { %>

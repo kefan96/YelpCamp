@@ -20,13 +20,14 @@ router.get("/", (req, res) => {
   
   router.post("/", middleware.isLoggedIn, (req, res) => {
     var name = req.body.name;
+    var price = req.body.price;
     var image = req.body.image;
     var description = req.body.description;
     var author = {
         id: req.user._id,
         username: req.user.username
     };
-    var newCampground = {name: name, image: image, description: description, author: author};
+    var newCampground = {name: name, price: price, image: image, description: description, author: author};
     Campground.create(newCampground, err => {
       if (err) {
         console.log(err);
@@ -40,11 +41,17 @@ router.get("/", (req, res) => {
   router.get("/:id", (req, res) => {
     // find the campground with provided ID
     // render show template with that campground
-    Campground.findById(req.params.id).populate("comments").exec((err, campground) => {
+    Campground.find({}, (err, allCampgrounds) => {
       if (err) {
         console.log(err);
       } else {
-        res.render("campgrounds/show", {campground: campground});
+        Campground.findById(req.params.id).populate("comments").exec((err, campground) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.render("campgrounds/show", {allCampgrounds: allCampgrounds, campground: campground});
+          }
+        });
       }
     });
   });
